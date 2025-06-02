@@ -535,7 +535,13 @@ async def generate_and_update_project_name(project_id: str, prompt: str):
         messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}]
 
         logger.debug(f"Calling LLM ({model_name}) for project {project_id} naming.")
-        response = await make_llm_api_call(messages=messages, model_name=model_name, max_tokens=20, temperature=0.7)
+        response = await make_llm_api_call(
+            messages=messages,
+            model_name=model_name,
+            max_tokens=20,
+            temperature=0.7,
+            account_id=None  # Added account_id=None
+        )
 
         generated_name = None
         if response and response.get('choices') and response['choices'][0].get('message'):

@@ -19,6 +19,7 @@ from enum import Enum
 from typing import Dict, Any, Optional, get_type_hints, Union
 from dotenv import load_dotenv
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +163,11 @@ class Configuration:
     SANDBOX_IMAGE_NAME = "kortix/suna:0.1.2.8"
     SANDBOX_ENTRYPOINT = "/usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf"
 
+    # Rate limiting configurations
+    TOKEN_RATE_LIMITS: Dict[str, Dict[str, int]] = {"default": {"tpm": 50000}, "gpt-4o-mini": {"tpm": 100000}}
+    USER_SPECIFIC_TOKEN_RATE_LIMITS_ENABLED: bool = True
+    TOKEN_RATE_LIMIT_WINDOW_SECONDS: int = 60
+
     @property
     def STRIPE_PRODUCT_ID(self) -> str:
         if self.ENV_MODE == EnvMode.STAGING:
@@ -208,6 +214,12 @@ class Configuration:
                 elif expected_type == EnvMode:
                     # Already handled for ENV_MODE
                     pass
+                elif expected_type == Dict[str, Dict[str, int]] and key == "TOKEN_RATE_LIMITS":
+                    # Handle Dict[str, Dict[str, int]] conversion from JSON string
+                    try:
+                        setattr(self, key, json.loads(env_val))
+                    except json.JSONDecodeError:
+                        logger.warning(f"Invalid JSON value for {key}: {env_val}, using default")
                 else:
                     # String or other type
                     setattr(self, key, env_val)

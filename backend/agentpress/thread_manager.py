@@ -161,7 +161,8 @@ class ThreadManager:
         include_xml_examples: bool = False,
         enable_thinking: Optional[bool] = False,
         reasoning_effort: Optional[str] = 'low',
-        enable_context_manager: bool = True
+        enable_context_manager: bool = True,
+        account_id: Optional[str] = None  # Added account_id
     ) -> Union[Dict[str, Any], AsyncGenerator]:
         """Run a conversation thread with LLM integration and tool execution.
 
@@ -331,7 +332,8 @@ Here are the XML tools available with examples:
                         tool_choice=tool_choice if processor_config.native_tool_calling else None,
                         stream=stream,
                         enable_thinking=enable_thinking,
-                        reasoning_effort=reasoning_effort
+                        reasoning_effort=reasoning_effort,
+                        account_id=account_id  # Pass account_id
                     )
                     logger.debug("Successfully received raw LLM API response stream/object")
 

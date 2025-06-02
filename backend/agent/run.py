@@ -223,7 +223,8 @@ async def run_agent(
                 include_xml_examples=True,
                 enable_thinking=enable_thinking,
                 reasoning_effort=reasoning_effort,
-                enable_context_manager=enable_context_manager
+                enable_context_manager=enable_context_manager,
+                account_id=account_id  # Pass account_id
             )
 
             if isinstance(response, dict) and "status" in response and response["status"] == "error":
